@@ -10,35 +10,40 @@ export function useNextRouterQuery(initialQueries: QueriesType) {
     useEffect(() => {
         beforePopState(({url}) => {
             const mockSearchParams = new URL(`http://localhost:3000${url}`).searchParams
+            const newQueryState: QueriesType ={}
             for (const [queryKey,] of Object.entries(initialQueries)) {
                 const queryValue = mockSearchParams.get(queryKey)
                 if (queryValue === null) {
-                    queryState[queryKey] = initialQueries[queryKey]
+                    newQueryState[queryKey] = initialQueries[queryKey]
                 } else {
-                    queryState[queryKey] = queryValue // preserve order
+                    newQueryState[queryKey] = queryValue // preserve order
                 }
             }
-            setQueryState({...queryState})
+            setQueryState(newQueryState)
             return true
         })
-    }, [setQueryState, queryState, initialQueries, beforePopState])
+
+        return () => {
+            beforePopState(() => true)
+        };
+    }, [setQueryState, beforePopState])
 
     useEffect(() => {
         if (isReady) {
-            for (const [queryKey,] of Object.entries(queryState)) {
+            const newQueryState: QueriesType ={}
+            for (const [queryKey,] of Object.entries(initialQueries)) {
                 if (query[queryKey] !== undefined) {
-                    queryState[queryKey] = query[queryKey] as string
+                    newQueryState[queryKey] = query[queryKey] as string
+                } else {
+                    newQueryState[queryKey] = initialQueries[queryKey]
                 }
             }
-            setQueryState({...queryState})
+            setQueryState(newQueryState)
         }
-    }, [isReady, query, queryState, setQueryState])
+    }, [isReady, query, setQueryState])
 
     function updateValues(newValues: QueriesType) {
-        for (const [queryKey,] of Object.entries(newValues)) {
-            queryState[queryKey] = newValues[queryKey]
-        }
-        const newQueryState = {...queryState}
+        const newQueryState = {...newValues}
         setQueryState(newQueryState)
         const queryString = Object.entries(newQueryState)
             .map(([key, value]) => `${key}=${value}`).join('&')
