@@ -1,2 +1,6 @@
+dist
+
 .idea
 use-next-router-query.iml
+package-lock.json
+node_modules
