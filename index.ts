@@ -1,32 +1,48 @@
-import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
+import {useRouter} from "next/router"
+import {useEffect, useState} from "react"
 
-export function useNextRouterQuery(initialValue: string, queryKey: string) {
+type QueriesType = Record<string, string>
+
+export function useNextRouterQuery(initialQueries: QueriesType) {
     const {query, push, isReady, beforePopState} = useRouter()
-    const [value, setValue] = useState<string>(initialValue)
+    const [queryState, setQueryState] = useState<QueriesType>(initialQueries)
 
     useEffect(() => {
         beforePopState(({url}) => {
-            const mockUrl = new URL(`http://localhost:3000${url}`)
-            const queryValue = mockUrl.searchParams.get(queryKey)
-            if (queryValue === null) {
-                setValue(initialValue)
-            } else {
-                setValue(queryValue)
+            const mockSearchParams = new URL(`http://localhost:3000${url}`).searchParams
+            for (const [queryKey,] of Object.entries(initialQueries)) {
+                const queryValue = mockSearchParams.get(queryKey)
+                if (queryValue === null) {
+                    queryState[queryKey] = initialQueries[queryKey]
+                } else {
+                    queryState[queryKey] = queryValue // preserve order
+                }
             }
+            setQueryState({...queryState})
             return true
         })
-    }, [setValue, initialValue, queryKey, beforePopState])
+    }, [setQueryState, queryState, initialQueries, beforePopState])
 
     useEffect(() => {
-        if (isReady && query[queryKey] !== undefined) {
-            setValue(query[queryKey])
+        if (isReady) {
+            for (const [queryKey,] of Object.entries(queryState)) {
+                if (query[queryKey] !== undefined) {
+                    queryState[queryKey] = query[queryKey] as string
+                }
+            }
+            setQueryState({...queryState})
         }
-    }, [isReady, query, queryKey, setValue])
+    }, [isReady, query, queryState, setQueryState])
 
-    function updateValue(newValue: string) {
-        setValue(newValue)
-        void push(`?${queryKey}=${newValue}`, undefined, {shallow: true})
+    function updateValues(newValues: QueriesType) {
+        for (const [queryKey,] of Object.entries(newValues)) {
+            queryState[queryKey] = newValues[queryKey]
+        }
+        const newQueryState = {...queryState}
+        setQueryState(newQueryState)
+        const queryString = Object.entries(newQueryState)
+            .map(([key, value]) => `${key}=${value}`).join('&')
+        void push('?' + queryString, undefined, {shallow: true})
     }
-    return [value, updateValue] as const
+    return [queryState, updateValues] as const
 }
