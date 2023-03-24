@@ -1,6 +1,6 @@
 {
   "name": "use-next-router-query",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Next.js hook for getting and setting a query string in the URL",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

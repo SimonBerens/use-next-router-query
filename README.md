@@ -11,7 +11,7 @@ This library takes care of updating the browser history and enabling navigation 
 import {useNextRouterQuery} from 'use-next-router-query'
 
 const Component = () => {
-    const [queryState, setQueryState] = useNextRouterQuery({a: 123, b: "hello"})
+    const [queryState, setQueryState] = useNextRouterQuery('/', {a: 123, b: "hello"})
     return (
         <>
             <div>{queryState.a}</div>
