@@ -3,7 +3,7 @@ import {useEffect, useState} from "react"
 
 type QueriesType = Record<string, string>
 
-export function useNextRouterQuery(initialQueries: QueriesType) {
+export function useNextRouterQuery(baseRoute: string, initialQueries: QueriesType) {
     const {query, push, isReady, beforePopState} = useRouter()
     const [queryState, setQueryState] = useState<QueriesType>(initialQueries)
 
@@ -47,7 +47,7 @@ export function useNextRouterQuery(initialQueries: QueriesType) {
         setQueryState(newQueryState)
         const queryString = Object.entries(newQueryState)
             .map(([key, value]) => `${key}=${value}`).join('&')
-        void push('?' + queryString, undefined, {shallow: true})
+        void push(baseRoute + '?' + queryString, undefined, {shallow: true})
     }
     return [queryState, updateValues] as const
 }
