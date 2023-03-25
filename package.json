@@ -1,15 +1,29 @@
 {
   "name": "use-next-router-query",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Next.js hook for getting and setting a query string in the URL",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "prepublish": "tsc"
   },
-  "keywords": [],
+  "keywords": [
+    "next",
+    "nextjs",
+    "react",
+    "router",
+    "query",
+    "url",
+    "use",
+    "hook"
+  ],
   "author": "Simon Berens",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SimonBerens/use-next-router-query.git"
+  },
+  "homepage": "https://github.com/SimonBerens/use-next-router-query#readme",
   "peerDependencies": {
     "next": "^13.2.4",
     "react": "^18.2.0"
